@@ -145,5 +145,17 @@ export const resources: Resource[] = [
     description: 'Acolhimento, orientação jurídica e apoio psicológico para mulheres em situação de vulnerabilidade.',
     lat: -23.6901,
     lng: -46.5578
+  },
+  {
+    id: '13',
+    name: 'Parque Raphael Lazzuri',
+    category: 'cultura',
+    address: 'Av. Kennedy, 1111',
+    neighborhood: 'Vila Tereza',
+    schedule: 'Todos os dias: 6h às 22h',
+    contact: '',
+    description: 'Parque com brinquedos infantis, equipamento de ginástica para adultos e um palco ao ar livre para shows.',
+    lat: -23.6801,
+    lng: -46.5585
   }
 ];
