@@ -145,6 +145,7 @@ export const resources: Resource[] = [
     description: 'Acolhimento, orientação jurídica e apoio psicológico para mulheres em situação de vulnerabilidade.',
     lat: -23.6901,
     lng: -46.5578
+  },
   {
     id: '13',
     name: 'Parque Raphael Lazzuri',
