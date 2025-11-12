@@ -153,7 +153,7 @@ export const resources: Resource[] = [
     address: 'Av. Kennedy, 1111',
     neighborhood: 'Vila Tereza',
     schedule: 'Todos os dias: 6h às 22h',
-    contact: '',
+    contact: 'Sem contato',
     description: 'Parque com brinquedos infantis, equipamento de ginástica para adultos e um palco ao ar livre para shows.',
     lat: -23.6801,
     lng: -46.5585
