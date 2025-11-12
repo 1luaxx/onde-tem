@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Resource } from '../types';
 import { categories } from '../data/categories';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
@@ -10,178 +10,157 @@ interface MapViewProps {
 }
 
 export function MapView({ resources }: MapViewProps) {
-  const mapContainerRef = useRef<HTMLDivElement>(null);
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const handleGetDirections = (resource: Resource) => {
     const url = `https://www.google.com/maps/dir/?api=1&destination=${resource.lat},${resource.lng}`;
     window.open(url, '_blank');
   };
 
-  useEffect(() => {
-    if (!mapContainerRef.current) return;
+  // Calcular posições dos marcadores
+  const markers = useMemo(() => {
+    if (resources.length === 0) return [];
 
-    // Limpar o container
-    mapContainerRef.current.innerHTML = '';
+    const lats = resources.map(r => r.lat);
+    const lngs = resources.map(r => r.lng);
+    const minLat = Math.min(...lats);
+    const maxLat = Math.max(...lats);
+    const minLng = Math.min(...lngs);
+    const maxLng = Math.max(...lngs);
 
-    // Criar SVG do mapa
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('width', '100%');
-    svg.setAttribute('height', '100%');
-    svg.setAttribute('viewBox', '0 0 1000 800');
-    svg.style.background = '#f5f5f5';
-
-    // Adicionar grid do mapa
-    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-    const pattern = document.createElementNS('http://www.w3.org/2000/svg', 'pattern');
-    pattern.setAttribute('id', 'grid');
-    pattern.setAttribute('width', '40');
-    pattern.setAttribute('height', '40');
-    pattern.setAttribute('patternUnits', 'userSpaceOnUse');
-    
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', 'M 40 0 L 0 0 0 40');
-    path.setAttribute('fill', 'none');
-    path.setAttribute('stroke', '#e0e0e0');
-    path.setAttribute('stroke-width', '1');
-    
-    pattern.appendChild(path);
-    defs.appendChild(pattern);
-    svg.appendChild(defs);
-
-    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    rect.setAttribute('width', '100%');
-    rect.setAttribute('height', '100%');
-    rect.setAttribute('fill', 'url(#grid)');
-    svg.appendChild(rect);
-
-    // Adicionar ruas estilizadas
-    const streets = [
-      'M 100 200 L 900 200',
-      'M 100 400 L 900 400',
-      'M 100 600 L 900 600',
-      'M 200 100 L 200 700',
-      'M 400 100 L 400 700',
-      'M 600 100 L 600 700',
-      'M 800 100 L 800 700',
-    ];
-
-    streets.forEach(d => {
-      const street = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      street.setAttribute('d', d);
-      street.setAttribute('stroke', '#d0d0d0');
-      street.setAttribute('stroke-width', '3');
-      street.setAttribute('fill', 'none');
-      svg.appendChild(street);
+    return resources.map(resource => {
+      const category = categories.find(c => c.id === resource.category);
+      const x = ((resource.lng - minLng) / (maxLng - minLng)) * 700 + 150;
+      const y = ((resource.lat - minLat) / (maxLat - minLat)) * 500 + 150;
+      
+      return {
+        resource,
+        category,
+        x,
+        y
+      };
     });
-
-    // Calcular bounds dos recursos
-    if (resources.length > 0) {
-      const lats = resources.map(r => r.lat);
-      const lngs = resources.map(r => r.lng);
-      const minLat = Math.min(...lats);
-      const maxLat = Math.max(...lats);
-      const minLng = Math.min(...lngs);
-      const maxLng = Math.max(...lngs);
-
-      // Adicionar marcadores
-      resources.forEach((resource) => {
-        const category = categories.find(c => c.id === resource.category);
-        
-        // Normalizar coordenadas para o SVG (0-1000 x, 0-800 y)
-        const x = ((resource.lng - minLng) / (maxLng - minLng)) * 700 + 150;
-        const y = ((resource.lat - minLat) / (maxLat - minLat)) * 500 + 150;
-
-        // Grupo do marcador
-        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        g.style.cursor = 'pointer';
-        g.addEventListener('click', () => setSelectedResource(resource));
-
-        // Sombra do marcador
-        const shadow = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
-        shadow.setAttribute('cx', String(x));
-        shadow.setAttribute('cy', String(y + 25));
-        shadow.setAttribute('rx', '15');
-        shadow.setAttribute('ry', '5');
-        shadow.setAttribute('fill', 'rgba(0,0,0,0.2)');
-        g.appendChild(shadow);
-
-        // Pin do marcador
-        const markerPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        markerPath.setAttribute('d', 'M 0,-20 C -8,-20 -15,-13 -15,-5 C -15,5 0,20 0,20 C 0,20 15,5 15,-5 C 15,-13 8,-20 0,-20 Z');
-        markerPath.setAttribute('transform', `translate(${x},${y})`);
-        markerPath.setAttribute('fill', category?.color || '#AE0C2E');
-        markerPath.setAttribute('stroke', '#ffffff');
-        markerPath.setAttribute('stroke-width', '2');
-        g.appendChild(markerPath);
-
-        // Círculo interno
-        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('cx', String(x));
-        circle.setAttribute('cy', String(y - 5));
-        circle.setAttribute('r', '5');
-        circle.setAttribute('fill', '#ffffff');
-        g.appendChild(circle);
-
-        // Tooltip hover
-        g.addEventListener('mouseenter', () => {
-          markerPath.setAttribute('transform', `translate(${x},${y}) scale(1.2)`);
-          
-          // Criar tooltip
-          const tooltip = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-          tooltip.setAttribute('id', `tooltip-${resource.id}`);
-          
-          const tooltipBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-          tooltipBg.setAttribute('x', String(x + 20));
-          tooltipBg.setAttribute('y', String(y - 30));
-          tooltipBg.setAttribute('width', '200');
-          tooltipBg.setAttribute('height', '50');
-          tooltipBg.setAttribute('fill', 'white');
-          tooltipBg.setAttribute('stroke', category?.color || '#AE0C2E');
-          tooltipBg.setAttribute('stroke-width', '2');
-          tooltipBg.setAttribute('rx', '5');
-          tooltip.appendChild(tooltipBg);
-          
-          const tooltipText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          tooltipText.setAttribute('x', String(x + 30));
-          tooltipText.setAttribute('y', String(y - 10));
-          tooltipText.setAttribute('fill', '#33211C');
-          tooltipText.setAttribute('font-size', '14');
-          tooltipText.setAttribute('font-weight', 'bold');
-          tooltipText.textContent = resource.name;
-          tooltip.appendChild(tooltipText);
-          
-          const tooltipNeighborhood = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          tooltipNeighborhood.setAttribute('x', String(x + 30));
-          tooltipNeighborhood.setAttribute('y', String(y + 5));
-          tooltipNeighborhood.setAttribute('fill', '#666');
-          tooltipNeighborhood.setAttribute('font-size', '12');
-          tooltipNeighborhood.textContent = resource.neighborhood;
-          tooltip.appendChild(tooltipNeighborhood);
-          
-          svg.appendChild(tooltip);
-        });
-
-        g.addEventListener('mouseleave', () => {
-          markerPath.setAttribute('transform', `translate(${x},${y})`);
-          const tooltip = document.getElementById(`tooltip-${resource.id}`);
-          if (tooltip) tooltip.remove();
-        });
-
-        svg.appendChild(g);
-      });
-    }
-
-    mapContainerRef.current.appendChild(svg);
   }, [resources]);
+
+  const streets = [
+    'M 100 200 L 900 200',
+    'M 100 400 L 900 400',
+    'M 100 600 L 900 600',
+    'M 200 100 L 200 700',
+    'M 400 100 L 400 700',
+    'M 600 100 L 600 700',
+    'M 800 100 L 800 700',
+  ];
 
   return (
     <>
       <div className="relative w-full h-[calc(100vh-280px)] min-h-[500px]">
-        <div 
-          ref={mapContainerRef} 
-          className="w-full h-full rounded-lg overflow-hidden border border-border shadow-sm"
-        />
+        <div className="w-full h-full rounded-lg overflow-hidden border border-border shadow-sm bg-[#f5f5f5]">
+          <svg 
+            width="100%" 
+            height="100%" 
+            viewBox="0 0 1000 800"
+            className="w-full h-full"
+          >
+            {/* Grid de fundo */}
+            <defs>
+              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#e0e0e0" strokeWidth="1" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+
+            {/* Ruas */}
+            {streets.map((d, i) => (
+              <path 
+                key={i}
+                d={d}
+                stroke="#d0d0d0"
+                strokeWidth="3"
+                fill="none"
+              />
+            ))}
+
+            {/* Marcadores */}
+            {markers.map(({ resource, category, x, y }) => {
+              const isHovered = hoveredId === resource.id;
+              const scale = isHovered ? 1.2 : 1;
+              
+              return (
+                <g 
+                  key={resource.id}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => setSelectedResource(resource)}
+                  onMouseEnter={() => setHoveredId(resource.id)}
+                  onMouseLeave={() => setHoveredId(null)}
+                >
+                  {/* Sombra */}
+                  <ellipse
+                    cx={x}
+                    cy={y + 25}
+                    rx="15"
+                    ry="5"
+                    fill="rgba(0,0,0,0.2)"
+                  />
+
+                  {/* Pin do marcador */}
+                  <path
+                    d="M 0,-20 C -8,-20 -15,-13 -15,-5 C -15,5 0,20 0,20 C 0,20 15,5 15,-5 C 15,-13 8,-20 0,-20 Z"
+                    transform={`translate(${x},${y}) scale(${scale})`}
+                    fill={category?.color || '#AE0C2E'}
+                    stroke="#ffffff"
+                    strokeWidth="2"
+                    style={{ transformOrigin: `${x}px ${y}px`, transition: 'transform 0.2s' }}
+                  />
+
+                  {/* Círculo interno */}
+                  <circle
+                    cx={x}
+                    cy={y - 5}
+                    r="5"
+                    fill="#ffffff"
+                  />
+
+                  {/* Tooltip no hover */}
+                  {isHovered && (
+                    <g>
+                      <rect
+                        x={x + 20}
+                        y={y - 30}
+                        width="200"
+                        height="50"
+                        fill="white"
+                        stroke={category?.color || '#AE0C2E'}
+                        strokeWidth="2"
+                        rx="5"
+                      />
+                      <text
+                        x={x + 30}
+                        y={y - 10}
+                        fill="#33211C"
+                        fontSize="14"
+                        fontWeight="bold"
+                      >
+                        {resource.name.length > 25 
+                          ? resource.name.substring(0, 25) + '...' 
+                          : resource.name}
+                      </text>
+                      <text
+                        x={x + 30}
+                        y={y + 5}
+                        fill="#666"
+                        fontSize="12"
+                      >
+                        {resource.neighborhood}
+                      </text>
+                    </g>
+                  )}
+                </g>
+              );
+            })}
+          </svg>
+        </div>
         
         {resources.length === 0 && (
           <div className="absolute inset-0 flex items-center justify-center bg-muted/50 rounded-lg">
