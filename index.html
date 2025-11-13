@@ -1,15 +1,50 @@
-
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>App Builder</title>
-    </head>
-
-    <body>
-      <div id="root"></div>
-      <script type="module" src="/src/main.tsx"></script>
-    </body>
-  </html>
-  
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Onde Tem? - Recursos Comunitários</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'brand-red': '#AE0C2E',
+              // Educação
+              'edu': '#AE0C2E',
+              'edu-dark': '#8C0A25',
+              'edu-light': '#F8D7DA',
+              // Cultura
+              'cul': '#556B2F',
+              'cul-dark': '#445625',
+              'cul-light': '#D4E0B3',
+              // Saúde
+              'sau': '#DAA520',
+              'sau-dark': '#B8860B',
+              'sau-light': '#FFF8E1',
+              // Assistência Social
+              'soc': '#8D6E63',
+              'soc-dark': '#6D4C41',
+              'soc-light': '#EFEBE9',
+            },
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-gray-50">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
