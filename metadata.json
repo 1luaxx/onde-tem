@@ -1,0 +1,5 @@
+{
+  "name": "Onde Tem? - Recursos Comunitários",
+  "description": "Uma aplicação web para encontrar e visualizar recursos comunitários como educação, cultura, saúde e assistência social em São Bernardo do Campo. Permite filtrar por categoria e visualizar os locais em um mapa ou lista.",
+  "requestFramePermissions": []
+}
