@@ -1,20 +1,94 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Onde Tem?
 
-# Run and deploy your AI Studio app
+**Aplicativo de Mapeamento de Recursos Comunitários para São Bernardo do Campo**
 
-This contains everything you need to run your app locally.
+Onde Tem? é uma plataforma interativa desenvolvida para facilitar o acesso da população de São Bernardo do Campo aos recursos públicos e comunitários disponíveis na cidade. O aplicativo centraliza informações sobre serviços de educação, cultura, saúde e assistência social em uma interface intuitiva e acessível.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1TyVspennDemRd2c6uTlLeMgwb6Tyf9QB
+## Sobre o Projeto
 
-## Run Locally
+O projeto nasceu da necessidade de tornar mais visível e acessível a rede de serviços públicos e comunitários oferecidos em São Bernardo do Campo. Muitos munícipes desconhecem a localização e funcionamento de equipamentos importantes como UBS, CRAS, bibliotecas, centros culturais e escolas técnicas.
 
-**Prerequisites:**  Node.js
+Com o **Onde Tem?**, os cidadãos podem:
+- Localizar rapidamente serviços próximos à sua região
+- Acessar informações completas sobre horários, endereços e contatos
+- Filtrar recursos por categoria de interesse
+- Visualizar os serviços em mapa interativo ou lista detalhada
 
+## Funcionalidades
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### Visualização Interativa
+- **Mapa de Recursos**: Representação visual dos serviços com marcadores coloridos por categoria
+- **Visualização em Lista**: Listagem completa com cards informativos de todos os recursos
+- **Alternância Simples**: Botões de alternância entre visualização de mapa e lista
+
+### Sistema de Filtros
+- **Filtros por Categoria**: 
+  - **Educação** - Escolas técnicas, cursos profissionalizantes
+  - **Cultura** - Teatros, bibliotecas, centros culturais, parques
+  - **Saúde** - UBS, CAPS, policlínicas
+  - **Assistência Social** - CRAS, CREAS, centros de acolhimento
+
+### Informações Completas
+Cada recurso inclui:
+- Nome do equipamento
+- Endereço completo com bairro
+- Horários de funcionamento
+- Telefone para contato
+- Descrição detalhada dos serviços oferecidos
+- Localização geográfica (latitude/longitude)
+
+## Design e Identidade Visual
+
+O projeto utiliza uma paleta de cores cuidadosamente escolhida para representar a identidade visual de São Bernardo do Campo:
+
+- **Vermelho Principal** (`#AE0C2E`) - Cor primária, usada para elementos de destaque
+- **Verde Suave** (`#AFC2A3`) - Utilizada para categoria Saúde
+- **Amarelo Claro** (`#F6EEC3`) - Utilizada para categoria Educação
+- **Bege** (`#C7B299`) - Utilizada para categoria Assistência Social
+- **Marrom Escuro** (`#33211C`) - Cor secundária para textos e elementos de interface
+
+### Princípios de Design
+- **Acessibilidade**: Interface pensada para ser inclusiva e fácil de usar
+- **Responsividade**: Funciona perfeitamente em dispositivos móveis, tablets e desktops
+- **Usabilidade**: Navegação intuitiva e informações organizadas de forma clara
+
+## Tecnologias Utilizadas
+
+O Onde Tem? foi desenvolvido utilizando tecnologias modernas de desenvolvimento web:
+
+- **React** - Biblioteca JavaScript para construção da interface
+- **TypeScript** - Superset do JavaScript com tipagem estática
+- **Tailwind CSS** - Framework CSS utility-first para estilização
+- **Lucide React** - Biblioteca de ícones
+- **Vite** - Build tool e servidor de desenvolvimento
+
+### Componentes Principais
+```
+/components
+  ├── Header.tsx           # Cabeçalho do aplicativo
+  ├── FilterBar.tsx        # Barra de filtros e alternância de visualização
+  ├── MapView.tsx          # Visualização em mapa
+  ├── ListView.tsx         # Visualização em lista
+  ├── ResourceCard.tsx     # Card de recurso individual
+  └── DebugPanel.tsx       # Painel de debug (desenvolvimento)
+```
+
+## Estrutura de Dados
+
+Os recursos comunitários estão organizados em uma estrutura de dados tipada:
+
+```typescript
+interface Resource {
+  id: string;
+  name: string;
+  category: 'educacao' | 'cultura' | 'saude' | 'assistencia';
+  address: string;
+  neighborhood: string;
+  schedule: string;
+  contact: string;
+  description: string;
+  lat: number;
+  lng: number;
+}
+```
+
