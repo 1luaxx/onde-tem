@@ -62,17 +62,6 @@ O Onde Tem? foi desenvolvido utilizando tecnologias modernas de desenvolvimento 
 - **Lucide React** - Biblioteca de ícones
 - **Vite** - Build tool e servidor de desenvolvimento
 
-### Componentes Principais
-```
-/components
-  ├── Header.tsx           # Cabeçalho do aplicativo
-  ├── FilterBar.tsx        # Barra de filtros e alternância de visualização
-  ├── MapView.tsx          # Visualização em mapa
-  ├── ListView.tsx         # Visualização em lista
-  ├── ResourceCard.tsx     # Card de recurso individual
-  └── DebugPanel.tsx       # Painel de debug (desenvolvimento)
-```
-
 ## Estrutura de Dados
 
 Os recursos comunitários estão organizados em uma estrutura de dados tipada:
