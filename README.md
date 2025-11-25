@@ -68,16 +68,16 @@ Os recursos comunitários estão organizados em uma estrutura de dados tipada:
 
 ```typescript
 interface Resource {
+{
   id: string;
   name: string;
   category: 'educacao' | 'cultura' | 'saude' | 'assistencia';
+  description: string;
   address: string;
   neighborhood: string;
-  schedule: string;
-  contact: string;
-  description: string;
-  lat: number;
-  lng: number;
+  hours: string;
+  phone: string;
+  coords: object;
 }
 ```
 
